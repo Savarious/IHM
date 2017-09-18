@@ -1,91 +1,63 @@
-import javax.swing.JComponent;
-import javax.swing.SwingConstants;
-import javax.swing.event.ChangeListener;
+import javax.swing.JSlider;
 
-public class JRangeSlider extends JComponent implements RangeSlider, SwingConstants {
 
-	private int min; // borne min
-	private int max; // borne max
-	private int valueMax; // curseur max
-	private int valueMin; // curseur min
-	private int extent; // pas 
-	
-	@Override
-	public int getMax() {
-		
-		return max;
-	}
+@SuppressWarnings("serial")
+public class JRangeSlider extends JSlider {
 
-	@Override
-	public int getMin() {
-		return min;
-	}
+  
+    public JRangeSlider() {
+        initSlider();
+    }
 
-	@Override
-	public int getValueMax() {
-		return valueMax;
-	}
+    public JRangeSlider(int min, int max) {
+        super(min, max);
+        initSlider();
+    }
 
-	@Override
-	public int getValueMin() {
-		return valueMin;
-	}
+    private void initSlider() {
+        setOrientation(HORIZONTAL);
+    }
 
-	@Override
-	public int getRange() {
-		return max-min;
-	}
+    @Override
+    public void updateUI() {
+        setUI(new RangeSliderUI(this));
+        // Update UI for slider labels.  This must be called after updating the
+        // UI of the slider.  Refer to JSlider.updateUI().
+        updateLabelUIs();
+    }
 
-	@Override
-	public int getExtent() {
-		return extent;
-	}
+    @Override
+    public int getValue() {
+        return super.getValue();
+    }
 
-	@Override
-	public void addChangeListener(ChangeListener e) {
-		
-	}
+    @Override
+    public void setValue(int value) {
+        int oldValue = getValue();
+        if (oldValue == value) {
+            return;
+        }
 
-	@Override
-	public void setMax(int max) {
-		if(max > min)
-		{
-			this.max = max;
-		}
-	}
+        // Compute new value and extent to maintain upper value.
+        int oldExtent = getExtent();
+        int newValue = Math.min(Math.max(getMinimum(), value), oldValue + oldExtent);
+        int newExtent = oldExtent + oldValue - newValue;
 
-	@Override
-	public void setMin(int min) {
-		if(max < min)
-		{
-			this.min = min;
-		}
-		
-	}
+        // Set new value and extent, and fire a single change event.
+        getModel().setRangeProperties(newValue, newExtent, getMinimum(), 
+            getMaximum(), getValueIsAdjusting());
+    }
 
-	@Override
-	public void setValueMax(int valueMax) {
-		if(valueMax <= this.getMax() && valueMax > this.getMin() && valueMax > getValueMin()) 
-		{
-			this.valueMax = valueMax;
-		}
-		
-	}
+    public int getUpperValue() {
+        return getValue() + getExtent();
+    }
 
-	@Override
-	public void setValueMin(int valueMin) {
-		if(valueMin >= this.getMin() && valueMin < this.getMax() && valueMin < getValueMax()) 
-		{
-			this.valueMin = valueMin;
-		}
-	}
-
-	@Override
-	public void setExtent(int extent) {
-		if(extent > 0 && extent < this.getMax() - this.getMin())
-		{
-			this.extent = extent;
-		}
-	}
-
+    public void setUpperValue(int value) {
+        // Compute new extent.
+        int lowerValue = getValue();
+        int newExtent = Math.min(Math.max(0, value - lowerValue), getMaximum() - lowerValue);
+        
+        // Set extent to set upper value.
+        setExtent(newExtent);
+    }
 }
