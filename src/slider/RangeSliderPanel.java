@@ -7,6 +7,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 
+
 public class RangeSliderPanel extends JPanel{
 	
 	private static final long serialVersionUID = 5490768304007301683L;
@@ -66,4 +67,9 @@ public class RangeSliderPanel extends JPanel{
 		pRangeValuesLabel.setText(rangeSliderModel.getValue() + " - " +  rangeSliderModel.getUpperValue());
 	}
 
+	public RangeSlider getRangeSlider() {
+		return this.pRangeSlider;
+	}
+
+	
 }

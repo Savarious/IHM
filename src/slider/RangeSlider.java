@@ -25,12 +25,15 @@ public class RangeSlider extends JComponent implements MouseMotionListener, Mous
 	
 	private RangeSliderModel rangeSliderModel;
 	
+	static final int _rsize = 11;
+	static final int _half_rsize = _rsize / 2;
+	
 	public RangeSlider(int min, int max, int value, int upperValue ) {
 		draggingUpperValue=false;
 		draggingValue=false;
 		
-		rectangleValue=new Rectangle(0,0,10,10);
-		rectangleUpperValue=new Rectangle(0,0,10,10);
+		rectangleValue=new Rectangle(0,0,_rsize,_rsize);
+		rectangleUpperValue=new Rectangle(0,0,_rsize,_rsize);
 		
 		rangeSliderModel = new RangeSliderModel();
 		rangeSliderModel.setModel(min, max, value, upperValue);
@@ -38,7 +41,7 @@ public class RangeSlider extends JComponent implements MouseMotionListener, Mous
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		
-		setSize(300, 10);
+		setSize(300, _rsize +1);
 		
 	}
 	
@@ -51,6 +54,9 @@ public class RangeSlider extends JComponent implements MouseMotionListener, Mous
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+		
+		System.out.println("Pressed");
+		
 		if(rectangleValue.contains(e.getPoint())){
 			draggingValue=true;
 		}else if(rectangleUpperValue.contains(e.getPoint())){
@@ -61,6 +67,9 @@ public class RangeSlider extends JComponent implements MouseMotionListener, Mous
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		
+		System.out.println("Released");
+		
 		draggingUpperValue=false;
 		draggingValue=false;		
 	}
@@ -80,22 +89,27 @@ public class RangeSlider extends JComponent implements MouseMotionListener, Mous
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		
-		double width = getWidth() - 10;
+		System.out.println("Dragged");
 		
-		if (draggingValue) {
+		double left_pos = _half_rsize;
+		double right_pos = getWidth() - _half_rsize - 2; // -2 for symmetry
+		double width = right_pos - left_pos;
+
+		if (this.draggingValue) {
 			int result = (int) ((e.getX() / width) * (this.rangeSliderModel.getMaximum() - this.rangeSliderModel.getMinimum())
 					+ this.rangeSliderModel.getMinimum());
 
 			if (this.rangeSliderModel.getValue() != result && this.rangeSliderModel.getUpperValue() != result) {
 				this.rangeSliderModel.setValue(result);
-				
+				checkValues();
 			}
-		} else if (draggingUpperValue) {
+		} else if (this.draggingUpperValue) {
 			int result = (int) ((e.getX() / width) * (this.rangeSliderModel.getMaximum() - this.rangeSliderModel.getMinimum())
 					+ this.rangeSliderModel.getMinimum());
 
 			if (this.rangeSliderModel.getUpperValue() != result && this.rangeSliderModel.getValue() != result) {
 				this.rangeSliderModel.setUpperValue(result);
+				checkValues();
 			}
 		}
 		
@@ -133,11 +147,45 @@ public class RangeSlider extends JComponent implements MouseMotionListener, Mous
 
 	private void paintRange(Graphics2D graphics2d) {
 		
-		graphics2d.setColor(Color.BLACK);
-		Shape line = new Line2D.Double(5,getHeight()/2,getWidth()-5,getHeight()/2);
-		graphics2d.draw(line);
+		double left_pos = _half_rsize;
+		double top_pos = getHeight() % 2 == 0 ? getHeight() / 2 - 1 : getHeight() / 2;
+		double right_pos = getWidth() - _half_rsize - 2; // - 2 for pretty
+															// drawing (tested
+															// on Windows)
+		double width = right_pos - left_pos;
+
+		double delta = this.rangeSliderModel.getMaximum() - this.rangeSliderModel.getMinimum();
+
+		double lright_pos = left_pos + width * ((this.rangeSliderModel.getValue() - this.rangeSliderModel.getMinimum()) / delta);
+		Shape left = new Line2D.Double(left_pos, top_pos, lright_pos, top_pos);
+		double mright_pos = left_pos + width * ((this.rangeSliderModel.getUpperValue() - this.rangeSliderModel.getMinimum()) / delta);
+		Shape middle = new Line2D.Double(lright_pos, top_pos, mright_pos, top_pos);
+		Shape right = new Line2D.Double(mright_pos, top_pos, left_pos + width, top_pos);
+
+		// Set thumbs location
+		this.rectangleValue.setLocation((int) (lright_pos - _half_rsize), (int) (top_pos - _half_rsize));
+		this.rectangleUpperValue.setLocation((int) (mright_pos - _half_rsize), (int) (top_pos - _half_rsize));
+
+		graphics2d.setColor(Color.GRAY);
+		graphics2d.draw(left);
+		graphics2d.setColor(Color.BLUE);
+		graphics2d.draw(middle);
+		graphics2d.setColor(Color.GRAY);
+		graphics2d.draw(right);
 		
 		
+	}
+	
+	private void checkValues() {
+		if (this.rangeSliderModel.getUpperValue() < this.rangeSliderModel.getValue()) {
+			int temp = this.rangeSliderModel.getUpperValue();
+			this.rangeSliderModel.setUpperValue(this.rangeSliderModel.getValue());
+			this.rangeSliderModel.setValue(temp);
+
+			boolean b_temp = this.draggingUpperValue;
+			this.draggingUpperValue = this.draggingValue;
+			this.draggingValue = b_temp;
+		}
 	}
 
 

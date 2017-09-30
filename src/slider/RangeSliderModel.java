@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class RangeSliderModel implements IRangeSliderModel{
 	
-	ArrayList<IRangeSliderListener> iRangeSliderListenerList ;
+	ArrayList<IRangeSliderListener> iRangeSliderListenerList = new ArrayList<IRangeSliderListener>();
 	
 	int value;
 	int upperValue;
