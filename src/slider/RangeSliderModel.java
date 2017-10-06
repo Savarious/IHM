@@ -35,9 +35,11 @@ public class RangeSliderModel implements IRangeSliderModel{
 	public void addListener(IRangeSliderListener iRangeSliderListener) {
 		if(!this.iRangeSliderListenerList.contains(iRangeSliderListener)){
 			iRangeSliderListenerList.add(iRangeSliderListener);
+			
+			System.out.println("Add listener");
 		}
 		
-		
+		System.out.println("Nb listeners : " + iRangeSliderListenerList.size());
 	}
 
 	@Override
@@ -58,12 +60,13 @@ public class RangeSliderModel implements IRangeSliderModel{
 
 	@Override
 	public void setValue(int value) {
-		this.value=value;
+		
 		
 		if (value != this.value) {
 			this.value = value;
 			for (int i = 0; i < this.iRangeSliderListenerList.size(); i++) {
 				this.iRangeSliderListenerList.get(i).valueChanged(value);
+				System.out.println("set value listener  " + this.iRangeSliderListenerList.get(i));
 			}
 		}
 		
@@ -71,12 +74,13 @@ public class RangeSliderModel implements IRangeSliderModel{
 
 	@Override
 	public void setUpperValue(int upperValue) {
-		this.upperValue=upperValue;
+
 		
 		if (upperValue != this.upperValue) {
 			this.upperValue = upperValue;
 			for (int i = 0; i < this.iRangeSliderListenerList.size(); i++) {
 				this.iRangeSliderListenerList.get(i).upperValueChanged(upperValue);
+				System.out.println("set upper value listener  " + this.iRangeSliderListenerList.get(i));
 			}
 		}
 	}
@@ -85,5 +89,7 @@ public class RangeSliderModel implements IRangeSliderModel{
 	public int getRange() {
 		return maximum-minimum;
 	}
+	
 
+	
 }

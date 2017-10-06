@@ -89,7 +89,8 @@ public class RangeSlider extends JComponent implements MouseMotionListener, Mous
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		
-		System.out.println("Dragged");
+		System.out.println(this.rangeSliderModel.value);
+		System.out.println(this.rangeSliderModel.upperValue);
 		
 		double left_pos = _half_rsize;
 		double right_pos = getWidth() - _half_rsize - 2; // -2 for symmetry
@@ -141,6 +142,8 @@ public class RangeSlider extends JComponent implements MouseMotionListener, Mous
 		graphics2d.fill(thumb);
 		graphics2d.setColor(Color.BLACK);
 		graphics2d.draw(thumb);
+		
+		System.out.println("Paint thumb");
 		
 	}
 
