@@ -29,7 +29,7 @@ public class MapPanel extends JPanel{
 		this.homes=homes;
 		this.controlPanel=controlPanel;
 		try {
-			image = ImageIO.read(new File("./map.jpg"));
+			image = ImageIO.read(new File("./grenoble.jpg"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -74,19 +74,19 @@ public class MapPanel extends JPanel{
 		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D) g;
 
-		/* Draw the "map" */
 		g2d.drawImage(this.image, 0, 0, null);
 
-		RangeSliderModel wPriceModel = controlPanel.getPrixModele();
-		RangeSliderModel wRoomModel = controlPanel.getPieceModele();
+		RangeSliderModel modelSliderPrix = controlPanel.getPrixModele();
+		RangeSliderModel modelSliderPiece = controlPanel.getPieceModele();
 
-		/* Draw dots on the map to symbolize homes */
+
 		g.setColor(Color.BLACK);
 		for (Home home : homes) {
-			/* Check wether we have to display this Home or not */
-			if (wPriceModel.getValue() < home.getPrix() && home.getPrix() < wPriceModel.getUpperValue()
-					&& wRoomModel.getValue() < home.getNbPiece() && home.getNbPiece() < wRoomModel.getUpperValue()) {
+
+			if (modelSliderPrix.getValue() < home.getPrix() && home.getPrix() < modelSliderPrix.getUpperValue()
+					&& modelSliderPiece.getValue() < home.getNbPiece() && home.getNbPiece() < modelSliderPiece.getUpperValue()) {
 				Position position = home.getPosition();
+				
 				Ellipse2D.Double circle = new Ellipse2D.Double(position.getX(), position.getY(), 20,
 						20);
 				g2d.fill(circle);
