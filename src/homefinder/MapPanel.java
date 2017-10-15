@@ -81,7 +81,7 @@ public class MapPanel extends JPanel{
 		RangeSliderModel wRoomModel = controlPanel.getPieceModele();
 
 		/* Draw dots on the map to symbolize homes */
-		g.setColor(Color.RED);
+		g.setColor(Color.BLACK);
 		for (Home home : homes) {
 			/* Check wether we have to display this Home or not */
 			if (wPriceModel.getValue() < home.getPrix() && home.getPrix() < wPriceModel.getUpperValue()
